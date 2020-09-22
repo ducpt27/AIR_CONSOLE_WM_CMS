@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-@Table(name = "users", schema = "ai_la_trieu_phu", catalog = "")
-public class UsersEntity {
+@Table(name = "user", schema = "ai_la_trieu_phu", catalog = "")
+public class UserEntity {
     private int id;
     private String fullName;
     private String username;
@@ -18,6 +18,16 @@ public class UsersEntity {
     private String createBy;
     private String updateBy;
     private Collection<GroupUserEntity> groupUsersById;
+
+    public UserEntity() {
+    }
+
+    public UserEntity(String fullName, String username, String email, String password) {
+        this.fullName = fullName;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
 
     @Id
     @Column(name = "id")
@@ -113,7 +123,7 @@ public class UsersEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UsersEntity that = (UsersEntity) o;
+        UserEntity that = (UserEntity) o;
         return id == that.id &&
                 Objects.equals(fullName, that.fullName) &&
                 Objects.equals(username, that.username) &&
@@ -130,7 +140,7 @@ public class UsersEntity {
         return Objects.hash(id, fullName, username, password, email, createAt, updateAt, createBy, updateBy);
     }
 
-    @OneToMany(mappedBy = "usersByUserId")
+    @OneToMany(mappedBy = "userByUserId")
     public Collection<GroupUserEntity> getGroupUsersById() {
         return groupUsersById;
     }

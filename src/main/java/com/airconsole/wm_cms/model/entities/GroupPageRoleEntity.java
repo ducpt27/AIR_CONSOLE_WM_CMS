@@ -10,9 +10,9 @@ public class GroupPageRoleEntity {
     private int groupId;
     private int pageId;
     private int roleId;
-    private GroupUserEntity groupUserByGroupId;
-    private PagesEntity pagesByPageId;
-    private RolesEntity rolesByRoleId;
+    private GroupEntity groupByGroupId;
+    private PageEntity pageByPageId;
+    private RoleEntity roleByRoleId;
 
     @Id
     @Column(name = "group_id")
@@ -61,31 +61,31 @@ public class GroupPageRoleEntity {
 
     @ManyToOne
     @JoinColumn(name = "group_id", referencedColumnName = "id", nullable = false)
-    public GroupUserEntity getGroupUserByGroupId() {
-        return groupUserByGroupId;
+    public GroupEntity getGroupByGroupId() {
+        return groupByGroupId;
     }
 
-    public void setGroupUserByGroupId(GroupUserEntity groupUserByGroupId) {
-        this.groupUserByGroupId = groupUserByGroupId;
+    public void setGroupByGroupId(GroupEntity groupByGroupId) {
+        this.groupByGroupId = groupByGroupId;
     }
 
     @ManyToOne
     @JoinColumn(name = "page_id", referencedColumnName = "id", nullable = false)
-    public PagesEntity getPagesByPageId() {
-        return pagesByPageId;
+    public PageEntity getPageByPageId() {
+        return pageByPageId;
     }
 
-    public void setPagesByPageId(PagesEntity pagesByPageId) {
-        this.pagesByPageId = pagesByPageId;
+    public void setPageByPageId(PageEntity pageByPageId) {
+        this.pageByPageId = pageByPageId;
     }
 
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
-    public RolesEntity getRolesByRoleId() {
-        return rolesByRoleId;
+    public RoleEntity getRoleByRoleId() {
+        return roleByRoleId;
     }
 
-    public void setRolesByRoleId(RolesEntity rolesByRoleId) {
-        this.rolesByRoleId = rolesByRoleId;
+    public void setRoleByRoleId(RoleEntity roleByRoleId) {
+        this.roleByRoleId = roleByRoleId;
     }
 }

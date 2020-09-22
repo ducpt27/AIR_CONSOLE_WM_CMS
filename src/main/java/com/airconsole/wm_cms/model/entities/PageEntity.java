@@ -1,20 +1,17 @@
 package com.airconsole.wm_cms.model.entities;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-@Table(name = "pages", schema = "ai_la_trieu_phu", catalog = "")
-public class PagesEntity {
+@Table(name = "page", schema = "ai_la_trieu_phu", catalog = "")
+public class PageEntity {
     private int id;
-    private int name;
+    private String name;
     private String url;
     private String icon;
     private int parentId;
     private Byte menuIndex;
-    private Collection<GroupPageRoleEntity> groupPageRolesById;
-    private Collection<PageRoleEntity> pageRolesById;
 
     @Id
     @Column(name = "id")
@@ -28,11 +25,11 @@ public class PagesEntity {
 
     @Basic
     @Column(name = "name")
-    public int getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(int name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -80,10 +77,10 @@ public class PagesEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PagesEntity that = (PagesEntity) o;
+        PageEntity that = (PageEntity) o;
         return id == that.id &&
-                name == that.name &&
                 parentId == that.parentId &&
+                Objects.equals(name, that.name) &&
                 Objects.equals(url, that.url) &&
                 Objects.equals(icon, that.icon) &&
                 Objects.equals(menuIndex, that.menuIndex);
@@ -92,23 +89,5 @@ public class PagesEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, url, icon, parentId, menuIndex);
-    }
-
-    @OneToMany(mappedBy = "pagesByPageId")
-    public Collection<GroupPageRoleEntity> getGroupPageRolesById() {
-        return groupPageRolesById;
-    }
-
-    public void setGroupPageRolesById(Collection<GroupPageRoleEntity> groupPageRolesById) {
-        this.groupPageRolesById = groupPageRolesById;
-    }
-
-    @OneToMany(mappedBy = "pagesByPageId")
-    public Collection<PageRoleEntity> getPageRolesById() {
-        return pageRolesById;
-    }
-
-    public void setPageRolesById(Collection<PageRoleEntity> pageRolesById) {
-        this.pageRolesById = pageRolesById;
     }
 }

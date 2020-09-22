@@ -1,27 +1,29 @@
 package com.airconsole.wm_cms.model.entities;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Objects;
 
 @Entity
 @Table(name = "group_user", schema = "ai_la_trieu_phu", catalog = "")
+@IdClass(GroupUserEntityPK.class)
 public class GroupUserEntity {
-    private int id;
+    private int groupId;
     private int userId;
-    private Collection<GroupPageRoleEntity> groupPageRolesById;
-    private UsersEntity usersByUserId;
+    private GroupEntity groupByGroupId;
+    private UserEntity userByUserId;
 
     @Id
-    @Column(name = "id")
-    public int getId() {
-        return id;
+    @Basic
+    @Column(name = "group_id")
+    public int getGroupId() {
+        return groupId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
     }
 
+    @Id
     @Basic
     @Column(name = "user_id")
     public int getUserId() {
@@ -37,31 +39,32 @@ public class GroupUserEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GroupUserEntity that = (GroupUserEntity) o;
-        return id == that.id &&
+        return groupId == that.groupId &&
                 userId == that.userId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId);
+        return Objects.hash(groupId, userId);
     }
 
-    @OneToMany(mappedBy = "groupUserByGroupId")
-    public Collection<GroupPageRoleEntity> getGroupPageRolesById() {
-        return groupPageRolesById;
+    @ManyToOne
+    @JoinColumn(name = "group_id", referencedColumnName = "id", nullable = false)
+    public GroupEntity getGroupByGroupId() {
+        return groupByGroupId;
     }
 
-    public void setGroupPageRolesById(Collection<GroupPageRoleEntity> groupPageRolesById) {
-        this.groupPageRolesById = groupPageRolesById;
+    public void setGroupByGroupId(GroupEntity groupByGroupId) {
+        this.groupByGroupId = groupByGroupId;
     }
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    public UsersEntity getUsersByUserId() {
-        return usersByUserId;
+    public UserEntity getUserByUserId() {
+        return userByUserId;
     }
 
-    public void setUsersByUserId(UsersEntity usersByUserId) {
-        this.usersByUserId = usersByUserId;
+    public void setUserByUserId(UserEntity userByUserId) {
+        this.userByUserId = userByUserId;
     }
 }

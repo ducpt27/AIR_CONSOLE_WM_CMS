@@ -6,10 +6,10 @@ import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-@Table(name = "roles", schema = "ai_la_trieu_phu", catalog = "")
-public class RolesEntity {
+@Table(name = "role", schema = "ai_la_trieu_phu", catalog = "")
+public class RoleEntity {
     private int id;
-    private int name;
+    private String name;
     private Timestamp createdAt;
     private Timestamp updateAt;
     private String createBy;
@@ -30,11 +30,11 @@ public class RolesEntity {
 
     @Basic
     @Column(name = "name")
-    public int getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(int name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -92,10 +92,10 @@ public class RolesEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RolesEntity that = (RolesEntity) o;
+        RoleEntity that = (RoleEntity) o;
         return id == that.id &&
-                name == that.name &&
                 status == that.status &&
+                Objects.equals(name, that.name) &&
                 Objects.equals(createdAt, that.createdAt) &&
                 Objects.equals(updateAt, that.updateAt) &&
                 Objects.equals(createBy, that.createBy) &&
@@ -107,7 +107,7 @@ public class RolesEntity {
         return Objects.hash(id, name, createdAt, updateAt, createBy, updateBy, status);
     }
 
-    @OneToMany(mappedBy = "rolesByRoleId")
+    @OneToMany(mappedBy = "roleByRoleId")
     public Collection<GroupPageRoleEntity> getGroupPageRolesById() {
         return groupPageRolesById;
     }
@@ -116,7 +116,7 @@ public class RolesEntity {
         this.groupPageRolesById = groupPageRolesById;
     }
 
-    @OneToMany(mappedBy = "rolesByRoleId")
+    @OneToMany(mappedBy = "roleByRoleId")
     public Collection<PageRoleEntity> getPageRolesById() {
         return pageRolesById;
     }

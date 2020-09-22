@@ -9,8 +9,8 @@ import java.util.Objects;
 public class PageRoleEntity {
     private int pageId;
     private int roleId;
-    private PagesEntity pagesByPageId;
-    private RolesEntity rolesByRoleId;
+    private PageEntity pageByPageId;
+    private RoleEntity roleByRoleId;
 
     @Id
     @Column(name = "page_id")
@@ -48,21 +48,21 @@ public class PageRoleEntity {
 
     @ManyToOne
     @JoinColumn(name = "page_id", referencedColumnName = "id", nullable = false)
-    public PagesEntity getPagesByPageId() {
-        return pagesByPageId;
+    public PageEntity getPageByPageId() {
+        return pageByPageId;
     }
 
-    public void setPagesByPageId(PagesEntity pagesByPageId) {
-        this.pagesByPageId = pagesByPageId;
+    public void setPageByPageId(PageEntity pageByPageId) {
+        this.pageByPageId = pageByPageId;
     }
 
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
-    public RolesEntity getRolesByRoleId() {
-        return rolesByRoleId;
+    public RoleEntity getRoleByRoleId() {
+        return roleByRoleId;
     }
 
-    public void setRolesByRoleId(RolesEntity rolesByRoleId) {
-        this.rolesByRoleId = rolesByRoleId;
+    public void setRoleByRoleId(RoleEntity roleByRoleId) {
+        this.roleByRoleId = roleByRoleId;
     }
 }
