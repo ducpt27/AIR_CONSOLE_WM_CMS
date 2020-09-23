@@ -1,4 +1,4 @@
-package com.airconsole.wm_cms.payload.exception;
+package com.airconsole.wm_cms.listener.payload.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

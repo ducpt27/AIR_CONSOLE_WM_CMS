@@ -1,91 +1,68 @@
 package com.airconsole.wm_cms.model.entities;
 
-import javax.persistence.*;
-import java.util.Objects;
+import lombok.Data;
+import lombok.ToString;
 
+import java.io.Serializable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
+@Data
+@ToString
 @Entity
-@Table(name = "group_page_role", schema = "ai_la_trieu_phu", catalog = "")
-@IdClass(GroupPageRoleEntityPK.class)
-public class GroupPageRoleEntity {
-    private int groupId;
-    private int pageId;
-    private int roleId;
-    private GroupEntity groupByGroupId;
-    private PageEntity pageByPageId;
-    private RoleEntity roleByRoleId;
+@Table(name = "group_page_role")
+@NamedQueries({
+    @NamedQuery(name = "GroupPageRoleEntity.findAll", query = "SELECT g FROM GroupPageRoleEntity g")})
+public class GroupPageRoleEntity implements Serializable {
 
-    @Id
-    @Column(name = "group_id")
-    public int getGroupId() {
-        return groupId;
-    }
+    private static final long serialVersionUID = 1L;
 
-    public void setGroupId(int groupId) {
-        this.groupId = groupId;
-    }
+    @EmbeddedId
+    protected GroupPageRoleEntityPK groupPageRoleEntityPK;
 
-    @Id
-    @Column(name = "page_id")
-    public int getPageId() {
-        return pageId;
-    }
+    @JoinColumn(name = "group_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private GroupEntity groupEntity;
 
-    public void setPageId(int pageId) {
-        this.pageId = pageId;
-    }
+    @JoinColumn(name = "page_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private PageEntity pageEntity;
 
-    @Id
-    @Column(name = "role_id")
-    public int getRoleId() {
-        return roleId;
-    }
+    @JoinColumn(name = "role_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private RoleEntity roleEntity;
 
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GroupPageRoleEntity that = (GroupPageRoleEntity) o;
-        return groupId == that.groupId &&
-                pageId == that.pageId &&
-                roleId == that.roleId;
+    public GroupPageRoleEntity() {
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(groupId, pageId, roleId);
+        int hash = 0;
+        hash += (groupPageRoleEntityPK != null ? groupPageRoleEntityPK.hashCode() : 0);
+        return hash;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "group_id", referencedColumnName = "id", nullable = false)
-    public GroupEntity getGroupByGroupId() {
-        return groupByGroupId;
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof GroupPageRoleEntity)) {
+            return false;
+        }
+        GroupPageRoleEntity other = (GroupPageRoleEntity) object;
+        if ((this.groupPageRoleEntityPK == null && other.groupPageRoleEntityPK != null) || (this.groupPageRoleEntityPK != null && !this.groupPageRoleEntityPK.equals(other.groupPageRoleEntityPK))) {
+            return false;
+        }
+        return true;
     }
 
-    public void setGroupByGroupId(GroupEntity groupByGroupId) {
-        this.groupByGroupId = groupByGroupId;
+    @Override
+    public String toString() {
+        return "com.airconsole.wm_cms.model.entities.GroupPageRoleEntity[ groupPageRoleEntityPK=" + groupPageRoleEntityPK + " ]";
     }
-
-    @ManyToOne
-    @JoinColumn(name = "page_id", referencedColumnName = "id", nullable = false)
-    public PageEntity getPageByPageId() {
-        return pageByPageId;
-    }
-
-    public void setPageByPageId(PageEntity pageByPageId) {
-        this.pageByPageId = pageByPageId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
-    public RoleEntity getRoleByRoleId() {
-        return roleByRoleId;
-    }
-
-    public void setRoleByRoleId(RoleEntity roleByRoleId) {
-        this.roleByRoleId = roleByRoleId;
-    }
+    
 }

@@ -1,153 +1,107 @@
 package com.airconsole.wm_cms.model.entities;
 
-import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.Objects;
+import lombok.Data;
+import lombok.ToString;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Date;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+@Data
+@ToString
 @Entity
-@Table(name = "question", schema = "ai_la_trieu_phu", catalog = "")
-public class QuestionEntity {
-    private int id;
-    private String name;
-    private String info;
-    private Integer nextId;
-    private Integer mileStone;
-    private Byte status;
-    private Timestamp createAt;
-    private String createBy;
-    private Timestamp updateAt;
-    private String updateBy;
-    private Collection<AnswerEntity> answersById;
+@Table(name = "question")
+public class QuestionEntity implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
-    public int getId() {
-        return id;
-    }
+    private Integer id;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Basic
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
     @Column(name = "name")
-    public String getName() {
-        return name;
-    }
+    private String name;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Basic
+    @Size(max = 255)
     @Column(name = "info")
-    public String getInfo() {
-        return info;
-    }
+    private String info;
 
-    public void setInfo(String info) {
-        this.info = info;
-    }
-
-    @Basic
     @Column(name = "next_id")
-    public Integer getNextId() {
-        return nextId;
-    }
+    private Integer nextId;
 
-    public void setNextId(Integer nextId) {
-        this.nextId = nextId;
-    }
-
-    @Basic
     @Column(name = "mile_stone")
-    public Integer getMileStone() {
-        return mileStone;
-    }
+    private Integer mileStone;
 
-    public void setMileStone(Integer mileStone) {
-        this.mileStone = mileStone;
-    }
-
-    @Basic
     @Column(name = "status")
-    public Byte getStatus() {
-        return status;
-    }
+    private Short status;
 
-    public void setStatus(Byte status) {
-        this.status = status;
-    }
-
-    @Basic
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "create_at")
-    public Timestamp getCreateAt() {
-        return createAt;
-    }
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createAt;
 
-    public void setCreateAt(Timestamp createAt) {
-        this.createAt = createAt;
-    }
-
-    @Basic
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 60)
     @Column(name = "create_by")
-    public String getCreateBy() {
-        return createBy;
-    }
+    private String createBy;
 
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
-    }
-
-    @Basic
     @Column(name = "update_at")
-    public Timestamp getUpdateAt() {
-        return updateAt;
-    }
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updateAt;
 
-    public void setUpdateAt(Timestamp updateAt) {
-        this.updateAt = updateAt;
-    }
-
-    @Basic
+    @Size(max = 60)
     @Column(name = "update_by")
-    public String getUpdateBy() {
-        return updateBy;
-    }
+    private String updateBy;
 
-    public void setUpdateBy(String updateBy) {
-        this.updateBy = updateBy;
-    }
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idQuestion", fetch = FetchType.LAZY)
+    private Collection<AnswerEntity> answerEntityCollection;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        QuestionEntity that = (QuestionEntity) o;
-        return id == that.id &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(info, that.info) &&
-                Objects.equals(nextId, that.nextId) &&
-                Objects.equals(mileStone, that.mileStone) &&
-                Objects.equals(status, that.status) &&
-                Objects.equals(createAt, that.createAt) &&
-                Objects.equals(createBy, that.createBy) &&
-                Objects.equals(updateAt, that.updateAt) &&
-                Objects.equals(updateBy, that.updateBy);
+    public QuestionEntity() {
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, info, nextId, mileStone, status, createAt, createBy, updateAt, updateBy);
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
     }
 
-    @OneToMany(mappedBy = "questionByIdQuestion")
-    public Collection<AnswerEntity> getAnswersById() {
-        return answersById;
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof QuestionEntity)) {
+            return false;
+        }
+        QuestionEntity other = (QuestionEntity) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
     }
 
-    public void setAnswersById(Collection<AnswerEntity> answersById) {
-        this.answersById = answersById;
+    @Override
+    public String toString() {
+        return "com.airconsole.wm_cms.model.entities.QuestionEntity[ id=" + id + " ]";
     }
+    
 }

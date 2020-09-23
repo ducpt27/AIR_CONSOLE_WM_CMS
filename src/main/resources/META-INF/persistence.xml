@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="com.airconsole.wm_cms_wm_cms_jar_0.0.3.SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>com.airconsole.wm_cms.model.entities.QuestionEntity</class>
+    <class>com.airconsole.wm_cms.model.entities.GroupEntity</class>
+    <class>com.airconsole.wm_cms.model.entities.RoleEntity</class>
+    <class>com.airconsole.wm_cms.model.entities.PageEntity</class>
+    <class>com.airconsole.wm_cms.model.entities.GroupUserEntity</class>
+    <class>com.airconsole.wm_cms.model.entities.GroupPageRoleEntity</class>
+    <class>com.airconsole.wm_cms.model.entities.AnswerEntity</class>
+    <class>com.airconsole.wm_cms.model.entities.UserEntity</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/ai_la_trieu_phu?zeroDateTimeBehavior=convertToNull"/>
+      <property name="javax.persistence.jdbc.user" value="wm_cms"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="wm_cms#"/>
+    </properties>
+  </persistence-unit>
+</persistence>

@@ -1,57 +1,64 @@
 package com.airconsole.wm_cms.model.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import java.io.Serializable;
-import java.util.Objects;
+import lombok.Data;
+import lombok.ToString;
 
+import java.io.Serializable;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
+
+@Data
+@ToString
+@Embeddable
 public class GroupPageRoleEntityPK implements Serializable {
+
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "group_id")
     private int groupId;
+
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "page_id")
     private int pageId;
+
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "role_id")
     private int roleId;
 
-    @Column(name = "group_id")
-    @Id
-    public int getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(int groupId) {
-        this.groupId = groupId;
-    }
-
-    @Column(name = "page_id")
-    @Id
-    public int getPageId() {
-        return pageId;
-    }
-
-    public void setPageId(int pageId) {
-        this.pageId = pageId;
-    }
-
-    @Column(name = "role_id")
-    @Id
-    public int getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GroupPageRoleEntityPK that = (GroupPageRoleEntityPK) o;
-        return groupId == that.groupId &&
-                pageId == that.pageId &&
-                roleId == that.roleId;
+    public GroupPageRoleEntityPK() {
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(groupId, pageId, roleId);
+        int hash = 0;
+        hash += groupId;
+        hash += pageId;
+        hash += roleId;
+        return hash;
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof GroupPageRoleEntityPK)) {
+            return false;
+        }
+        GroupPageRoleEntityPK other = (GroupPageRoleEntityPK) object;
+        if (this.groupId != other.groupId) {
+            return false;
+        }
+        if (this.pageId != other.pageId) {
+            return false;
+        }
+        return this.roleId == other.roleId;
+    }
+
+    @Override
+    public String toString() {
+        return "com.airconsole.wm_cms.model.entities.GroupPageRoleEntityPK[ groupId=" + groupId + ", pageId=" + pageId + ", roleId=" + roleId + " ]";
+    }
+    
 }

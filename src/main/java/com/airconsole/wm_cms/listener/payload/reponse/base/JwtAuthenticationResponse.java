@@ -1,4 +1,4 @@
-package com.airconsole.wm_cms.payload.reponse;
+package com.airconsole.wm_cms.listener.payload.reponse.base;
 
 import lombok.Data;
 import lombok.ToString;

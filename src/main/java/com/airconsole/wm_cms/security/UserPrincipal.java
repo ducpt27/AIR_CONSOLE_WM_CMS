@@ -3,15 +3,21 @@ package com.airconsole.wm_cms.security;
 import com.airconsole.wm_cms.model.entities.GroupUserEntity;
 import com.airconsole.wm_cms.model.entities.UserEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Getter
+@ToString
 public class UserPrincipal implements UserDetails {
 
     private Integer id;
@@ -39,11 +45,13 @@ public class UserPrincipal implements UserDetails {
 
     public static UserPrincipal create(UserEntity user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-
-        for (GroupUserEntity entity : user.getGroupUsersById()) {
-            authorities = entity.getGroupByGroupId()
-                    .getGroupPageRolesById()
-                    .stream().map(e -> new SimpleGrantedAuthority(e.getRoleByRoleId().getName())).collect(Collectors.toList());
+        if (user.getGroupUserEntityCollection() != null) {
+            for (GroupUserEntity groupUserEntity : user.getGroupUserEntityCollection()) {
+                authorities.addAll(groupUserEntity.getGroupEntity().getGroupPageRoleEntityCollection()
+                        .stream()
+                        .map(e -> new SimpleGrantedAuthority(e.getRoleEntity().getName()))
+                        .collect(Collectors.toList()));
+            };
         }
 
         return new UserPrincipal(
@@ -56,21 +64,9 @@ public class UserPrincipal implements UserDetails {
         );
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+    public String getUsername() {
+        return username;
     }
 
     @Override
@@ -79,8 +75,8 @@ public class UserPrincipal implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
-        return username;
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
     }
 
     @Override
@@ -101,5 +97,19 @@ public class UserPrincipal implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserPrincipal that = (UserPrincipal) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
     }
 }

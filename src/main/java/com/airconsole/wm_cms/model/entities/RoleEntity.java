@@ -1,127 +1,87 @@
 package com.airconsole.wm_cms.model.entities;
 
-import javax.persistence.*;
-import java.sql.Timestamp;
+import lombok.Data;
+import lombok.ToString;
+
+import java.io.Serializable;
 import java.util.Collection;
-import java.util.Objects;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
+@Data
+@ToString
 @Entity
-@Table(name = "role", schema = "ai_la_trieu_phu", catalog = "")
-public class RoleEntity {
-    private int id;
-    private String name;
-    private Timestamp createdAt;
-    private Timestamp updateAt;
-    private String createBy;
-    private String updateBy;
-    private boolean status;
-    private Collection<GroupPageRoleEntity> groupPageRolesById;
-    private Collection<PageRoleEntity> pageRolesById;
+@Table(name = "role")
+public class RoleEntity implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
-    public int getId() {
-        return id;
-    }
+    private Integer id;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Basic
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
     @Column(name = "name")
-    public String getName() {
-        return name;
-    }
+    private String name;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 64)
+    @Column(name = "code")
+    private String code;
 
-    @Basic
-    @Column(name = "created_at")
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    @Basic
-    @Column(name = "update_at")
-    public Timestamp getUpdateAt() {
-        return updateAt;
-    }
-
-    public void setUpdateAt(Timestamp updateAt) {
-        this.updateAt = updateAt;
-    }
-
-    @Basic
-    @Column(name = "create_by")
-    public String getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
-    }
-
-    @Basic
-    @Column(name = "update_by")
-    public String getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(String updateBy) {
-        this.updateBy = updateBy;
-    }
-
-    @Basic
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "status")
-    public boolean isStatus() {
-        return status;
-    }
+    private boolean status;
 
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
+    @ManyToMany(mappedBy = "roleEntityCollection", fetch = FetchType.LAZY)
+    private Collection<PageEntity> pageEntityCollection;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RoleEntity that = (RoleEntity) o;
-        return id == that.id &&
-                status == that.status &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(createdAt, that.createdAt) &&
-                Objects.equals(updateAt, that.updateAt) &&
-                Objects.equals(createBy, that.createBy) &&
-                Objects.equals(updateBy, that.updateBy);
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "roleEntity", fetch = FetchType.LAZY)
+    private Collection<GroupPageRoleEntity> groupPageRoleEntityCollection;
+
+    public RoleEntity() {
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, createdAt, updateAt, createBy, updateBy, status);
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
     }
 
-    @OneToMany(mappedBy = "roleByRoleId")
-    public Collection<GroupPageRoleEntity> getGroupPageRolesById() {
-        return groupPageRolesById;
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof RoleEntity)) {
+            return false;
+        }
+        RoleEntity other = (RoleEntity) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
     }
 
-    public void setGroupPageRolesById(Collection<GroupPageRoleEntity> groupPageRolesById) {
-        this.groupPageRolesById = groupPageRolesById;
+    @Override
+    public String toString() {
+        return "com.airconsole.wm_cms.model.entities.RoleEntity[ id=" + id + " ]";
     }
-
-    @OneToMany(mappedBy = "roleByRoleId")
-    public Collection<PageRoleEntity> getPageRolesById() {
-        return pageRolesById;
-    }
-
-    public void setPageRolesById(Collection<PageRoleEntity> pageRolesById) {
-        this.pageRolesById = pageRolesById;
-    }
+    
 }

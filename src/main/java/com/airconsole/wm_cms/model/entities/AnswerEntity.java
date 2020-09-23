@@ -1,80 +1,76 @@
 package com.airconsole.wm_cms.model.entities;
 
-import javax.persistence.*;
-import java.util.Objects;
+import lombok.Data;
+import lombok.ToString;
 
+import java.io.Serializable;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+@Data
+@ToString
 @Entity
-@Table(name = "answer", schema = "ai_la_trieu_phu", catalog = "")
-public class AnswerEntity {
-    private int id;
-    private String name;
-    private boolean isTrue;
-    private int idQuestion;
-    private QuestionEntity questionByIdQuestion;
+@Table(name = "answer")
+public class AnswerEntity implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
-    public int getId() {
-        return id;
-    }
+    private Integer id;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Basic
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
     @Column(name = "name")
-    public String getName() {
-        return name;
-    }
+    private String name;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Basic
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "is_true")
-    public boolean isTrue() {
-        return isTrue;
-    }
+    private boolean isTrue;
 
-    public void setTrue(boolean aTrue) {
-        isTrue = aTrue;
-    }
+    @JoinColumn(name = "id_question", referencedColumnName = "id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private QuestionEntity idQuestion;
 
-    @Basic
-    @Column(name = "id_question")
-    public int getIdQuestion() {
-        return idQuestion;
-    }
-
-    public void setIdQuestion(int idQuestion) {
-        this.idQuestion = idQuestion;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AnswerEntity that = (AnswerEntity) o;
-        return id == that.id &&
-                isTrue == that.isTrue &&
-                idQuestion == that.idQuestion &&
-                Objects.equals(name, that.name);
+    public AnswerEntity() {
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, isTrue, idQuestion);
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "id_question", referencedColumnName = "id", nullable = false)
-    public QuestionEntity getQuestionByIdQuestion() {
-        return questionByIdQuestion;
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof AnswerEntity)) {
+            return false;
+        }
+        AnswerEntity other = (AnswerEntity) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
     }
 
-    public void setQuestionByIdQuestion(QuestionEntity questionByIdQuestion) {
-        this.questionByIdQuestion = questionByIdQuestion;
+    @Override
+    public String toString() {
+        return "com.airconsole.wm_cms.model.entities.AnswerEntity[ id=" + id + " ]";
     }
+    
 }

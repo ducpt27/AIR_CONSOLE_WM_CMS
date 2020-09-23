@@ -1,137 +1,107 @@
 package com.airconsole.wm_cms.model.entities;
 
-import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.Objects;
+import lombok.Data;
+import lombok.ToString;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Date;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+@Data
+@ToString
 @Entity
-@Table(name = "_group", schema = "ai_la_trieu_phu", catalog = "")
-public class GroupEntity {
-    private int id;
-    private String name;
-    private String description;
-    private boolean status;
-    private Timestamp updateAt;
-    private String updateBy;
-    private Collection<GroupPageRoleEntity> groupPageRolesById;
-    private Collection<GroupUserEntity> groupUsersById;
-    private Timestamp createAt;
-    private String createBy;
+@Table(name = "_group")
+public class GroupEntity implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
-    public int getId() {
-        return id;
-    }
+    private Integer id;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Basic
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 64)
     @Column(name = "name")
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Basic
+    private String name;
+    @Size(max = 255)
     @Column(name = "description")
-    public String getDescription() {
-        return description;
-    }
+    private String description;
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Basic
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "status")
-    public boolean isStatus() {
-        return status;
-    }
+    private boolean status;
 
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "create_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createAt;
 
-    @Basic
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 32)
+    @Column(name = "create_by")
+    private String createBy;
+
     @Column(name = "update_at")
-    public Timestamp getUpdateAt() {
-        return updateAt;
-    }
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updateAt;
 
-    public void setUpdateAt(Timestamp updateAt) {
-        this.updateAt = updateAt;
-    }
-
-    @Basic
+    @Size(max = 32)
     @Column(name = "update_by")
-    public String getUpdateBy() {
-        return updateBy;
-    }
+    private String updateBy;
 
-    public void setUpdateBy(String updateBy) {
-        this.updateBy = updateBy;
-    }
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "groupEntity", fetch = FetchType.LAZY)
+    private Collection<GroupUserEntity> groupUserEntityCollection;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GroupEntity that = (GroupEntity) o;
-        return id == that.id &&
-                status == that.status &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(description, that.description) &&
-                Objects.equals(updateAt, that.updateAt) &&
-                Objects.equals(updateBy, that.updateBy);
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "groupEntity", fetch = FetchType.LAZY)
+    private Collection<GroupPageRoleEntity> groupPageRoleEntityCollection;
+
+    public GroupEntity() {
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, status, updateAt, updateBy);
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
     }
 
-    @OneToMany(mappedBy = "groupByGroupId")
-    public Collection<GroupPageRoleEntity> getGroupPageRolesById() {
-        return groupPageRolesById;
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof GroupEntity)) {
+            return false;
+        }
+        GroupEntity other = (GroupEntity) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
     }
 
-    public void setGroupPageRolesById(Collection<GroupPageRoleEntity> groupPageRolesById) {
-        this.groupPageRolesById = groupPageRolesById;
+    @Override
+    public String toString() {
+        return "com.airconsole.wm_cms.model.entities.GroupEntity[ id=" + id + " ]";
     }
-
-    @OneToMany(mappedBy = "groupByGroupId")
-    public Collection<GroupUserEntity> getGroupUsersById() {
-        return groupUsersById;
-    }
-
-    public void setGroupUsersById(Collection<GroupUserEntity> groupUsersById) {
-        this.groupUsersById = groupUsersById;
-    }
-
-    @Basic
-    @Column(name = "create_at")
-    public Timestamp getCreateAt() {
-        return createAt;
-    }
-
-    public void setCreateAt(Timestamp createAt) {
-        this.createAt = createAt;
-    }
-
-    @Basic
-    @Column(name = "create_by")
-    public String getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
-    }
+    
 }

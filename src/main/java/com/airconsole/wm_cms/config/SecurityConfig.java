@@ -5,7 +5,9 @@ import com.airconsole.wm_cms.security.JwtAuthenticationEntryPoint;
 import com.airconsole.wm_cms.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
@@ -26,8 +28,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
         jsr250Enabled = true,
         prePostEnabled = true
 )
+@ComponentScan
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    
+
     @Autowired
     CustomUserDetailsService customUserDetailsService;
 
@@ -61,17 +64,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .cors()
-                .and()
+                    .and()
                 .csrf()
-                .disable()
+                    .disable()
                 .exceptionHandling()
-                .authenticationEntryPoint(unauthorizedHandler)
-                .and()
+                    .authenticationEntryPoint(unauthorizedHandler)
+                    .and()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
                 .authorizeRequests()
-                .antMatchers("/",
+                    .antMatchers("/",
                         "/favicon.ico",
                         "/**/*.png",
                         "/**/*.gif",
@@ -80,17 +83,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.html",
                         "/**/*.css",
                         "/**/*.js")
-                .permitAll()
-                .antMatchers("/api/auth/**")
-                .permitAll()
-                .antMatchers("/api/user/checkUsernameAvailability", "/api/user/checkEmailAvailability")
-                .permitAll()
-                .antMatchers(HttpMethod.GET, "/api/question/**", "/api/user/**")
-                .permitAll()
-                .anyRequest()
-                .authenticated();
+                        .permitAll()
+                    .antMatchers("/api/auth/**")
+                        .permitAll()
+                    .antMatchers("/api/user/checkUsernameAvailability", "/api/user/checkEmailAvailability")
+                        .permitAll()
+                    .antMatchers(HttpMethod.GET, "/api/users/**")
+                        .permitAll()
+                    .anyRequest()
+                        .authenticated();
 
-        // Add our custom JWT security filter
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
     }

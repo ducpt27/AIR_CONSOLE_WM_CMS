@@ -1,4 +1,4 @@
-package com.airconsole.wm_cms.payload.request;
+package com.airconsole.wm_cms.listener.payload.request.auth;
 
 import lombok.Data;
 import lombok.ToString;
@@ -10,10 +10,10 @@ import javax.validation.constraints.*;
 public class SignUpRequest {
     @NotBlank
     @Size(min = 4, max = 255)
-    private String fullName;
+    private String full_name;
 
     @NotBlank
-    @Size(min = 6, max = 32)
+    @Size(min = 5, max = 32)
     private String username;
 
     @NotBlank

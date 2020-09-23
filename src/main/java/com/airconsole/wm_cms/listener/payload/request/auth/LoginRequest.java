@@ -1,4 +1,4 @@
-package com.airconsole.wm_cms.payload.request;
+package com.airconsole.wm_cms.listener.payload.request.auth;
 
 import javax.validation.constraints.NotBlank;
 

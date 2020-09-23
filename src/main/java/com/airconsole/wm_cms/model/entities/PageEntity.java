@@ -1,93 +1,96 @@
 package com.airconsole.wm_cms.model.entities;
 
-import javax.persistence.*;
-import java.util.Objects;
+import lombok.Data;
+import lombok.ToString;
 
+import java.io.Serializable;
+import java.util.Collection;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+@Data
+@ToString
 @Entity
-@Table(name = "page", schema = "ai_la_trieu_phu", catalog = "")
-public class PageEntity {
-    private int id;
-    private String name;
-    private String url;
-    private String icon;
-    private int parentId;
-    private Byte menuIndex;
+@Table(name = "page")
+public class PageEntity implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
-    public int getId() {
-        return id;
-    }
+    private Integer id;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Basic
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
     @Column(name = "name")
-    public String getName() {
-        return name;
-    }
+    private String name;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Basic
+    @Size(max = 255)
     @Column(name = "url")
-    public String getUrl() {
-        return url;
-    }
+    private String url;
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    @Basic
+    @Size(max = 50)
     @Column(name = "icon")
-    public String getIcon() {
-        return icon;
-    }
+    private String icon;
 
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    @Basic
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "parent_id")
-    public int getParentId() {
-        return parentId;
-    }
+    private int parentId;
 
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
-    }
-
-    @Basic
     @Column(name = "menu_index")
-    public Byte getMenuIndex() {
-        return menuIndex;
-    }
+    private Short menuIndex;
 
-    public void setMenuIndex(Byte menuIndex) {
-        this.menuIndex = menuIndex;
-    }
+    @JoinTable(name = "page_role", joinColumns = {
+        @JoinColumn(name = "page_id", referencedColumnName = "id")}, inverseJoinColumns = {
+        @JoinColumn(name = "role_id", referencedColumnName = "id")})
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Collection<RoleEntity> roleEntityCollection;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PageEntity that = (PageEntity) o;
-        return id == that.id &&
-                parentId == that.parentId &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(url, that.url) &&
-                Objects.equals(icon, that.icon) &&
-                Objects.equals(menuIndex, that.menuIndex);
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pageEntity", fetch = FetchType.LAZY)
+    private Collection<GroupPageRoleEntity> groupPageRoleEntityCollection;
+
+    public PageEntity() {
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, url, icon, parentId, menuIndex);
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof PageEntity)) {
+            return false;
+        }
+        PageEntity other = (PageEntity) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "com.airconsole.wm_cms.model.entities.PageEntity[ id=" + id + " ]";
+    }
+    
 }

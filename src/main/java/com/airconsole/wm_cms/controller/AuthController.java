@@ -1,14 +1,13 @@
 package com.airconsole.wm_cms.controller;
 
-
 import com.airconsole.wm_cms.model.entities.UserEntity;
 import com.airconsole.wm_cms.model.repository.RoleRepo;
 import com.airconsole.wm_cms.model.repository.UserRepo;
-import com.airconsole.wm_cms.payload.reponse.BaseResponse;
-import com.airconsole.wm_cms.payload.reponse.ErrorCode;
-import com.airconsole.wm_cms.payload.reponse.JwtAuthenticationResponse;
-import com.airconsole.wm_cms.payload.request.LoginRequest;
-import com.airconsole.wm_cms.payload.request.SignUpRequest;
+import com.airconsole.wm_cms.listener.payload.reponse.base.BaseResponse;
+import com.airconsole.wm_cms.listener.payload.reponse.base.ErrorCode;
+import com.airconsole.wm_cms.listener.payload.reponse.base.JwtAuthenticationResponse;
+import com.airconsole.wm_cms.listener.payload.request.auth.LoginRequest;
+import com.airconsole.wm_cms.listener.payload.request.auth.SignUpRequest;
 import com.airconsole.wm_cms.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,14 +30,17 @@ import java.net.URI;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    public AuthController() {
+    }
+
     @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepo userRepo;
+    UserRepo userRepository;
 
     @Autowired
-    RoleRepo roleRepo;
+    RoleRepo roleRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -47,7 +49,7 @@ public class AuthController {
     JwtTokenProvider tokenProvider;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUserEntity(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -63,27 +65,27 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUserEntity(@Valid @RequestBody SignUpRequest signUpRequest) {
-        if(userRepo.existsByUsername(signUpRequest.getUsername())) {
-            return new ResponseEntity<>(new BaseResponse(ErrorCode.FAILED, "Username is already taken!"),
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+            return new ResponseEntity(new BaseResponse(ErrorCode.SUCCESS, "Username is already taken!"),
                     HttpStatus.BAD_REQUEST);
         }
 
-        if(userRepo.existsByEmail(signUpRequest.getEmail())) {
-            return new ResponseEntity<>(new BaseResponse(ErrorCode.FAILED, "Email Address already in use!"),
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            return new ResponseEntity(new BaseResponse(ErrorCode.SUCCESS, "Email Address already in use!"),
                     HttpStatus.BAD_REQUEST);
         }
 
         // Creating user's account
-        UserEntity userEntity = new UserEntity(signUpRequest.getFullName(), signUpRequest.getUsername(),
-                signUpRequest.getEmail(), signUpRequest.getPassword());
+        UserEntity user = new UserEntity(signUpRequest.getFull_name(), signUpRequest.getUsername(),
+                signUpRequest.getPassword(), signUpRequest.getEmail());
 
-        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        UserEntity result = userRepo.save(userEntity);
+        UserEntity result = userRepository.save(user);
 
         URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/api/user/{username}")
+                .fromCurrentContextPath().path("/users/{username}")
                 .buildAndExpand(result.getUsername()).toUri();
 
         return ResponseEntity.created(location).body(new BaseResponse(ErrorCode.SUCCESS, "User registered successfully"));

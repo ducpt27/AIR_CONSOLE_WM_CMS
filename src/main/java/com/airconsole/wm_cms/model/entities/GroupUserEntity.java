@@ -1,70 +1,87 @@
 package com.airconsole.wm_cms.model.entities;
 
-import javax.persistence.*;
-import java.util.Objects;
+import lombok.Data;
+import lombok.ToString;
 
+import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+@Data
+@ToString
 @Entity
-@Table(name = "group_user", schema = "ai_la_trieu_phu", catalog = "")
-@IdClass(GroupUserEntityPK.class)
-public class GroupUserEntity {
-    private int groupId;
-    private int userId;
-    private GroupEntity groupByGroupId;
-    private UserEntity userByUserId;
+@Table(name = "group_user")
+public class GroupUserEntity implements Serializable {
 
-    @Id
-    @Basic
-    @Column(name = "group_id")
-    public int getGroupId() {
-        return groupId;
-    }
+    private static final long serialVersionUID = 1L;
 
-    public void setGroupId(int groupId) {
-        this.groupId = groupId;
-    }
+    @EmbeddedId
+    protected GroupUserEntityPK groupUserEntityPK;
 
-    @Id
-    @Basic
-    @Column(name = "user_id")
-    public int getUserId() {
-        return userId;
-    }
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 32)
+    @Column(name = "create_by")
+    private String createBy;
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
+    @Size(max = 32)
+    @Column(name = "update_by")
+    private String updateBy;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GroupUserEntity that = (GroupUserEntity) o;
-        return groupId == that.groupId &&
-                userId == that.userId;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "create_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createTime;
+
+    @Column(name = "update_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updateTime;
+
+    @JoinColumn(name = "group_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private GroupEntity groupEntity;
+
+    @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private UserEntity userEntity;
+
+    public GroupUserEntity() {
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(groupId, userId);
+        int hash = 0;
+        hash += (groupUserEntityPK != null ? groupUserEntityPK.hashCode() : 0);
+        return hash;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "group_id", referencedColumnName = "id", nullable = false)
-    public GroupEntity getGroupByGroupId() {
-        return groupByGroupId;
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof GroupUserEntity)) {
+            return false;
+        }
+        GroupUserEntity other = (GroupUserEntity) object;
+        if ((this.groupUserEntityPK == null && other.groupUserEntityPK != null) || (this.groupUserEntityPK != null && !this.groupUserEntityPK.equals(other.groupUserEntityPK))) {
+            return false;
+        }
+        return true;
     }
 
-    public void setGroupByGroupId(GroupEntity groupByGroupId) {
-        this.groupByGroupId = groupByGroupId;
+    @Override
+    public String toString() {
+        return "com.airconsole.wm_cms.model.entities.GroupUserEntity[ groupUserEntityPK=" + groupUserEntityPK + " ]";
     }
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    public UserEntity getUserByUserId() {
-        return userByUserId;
-    }
-
-    public void setUserByUserId(UserEntity userByUserId) {
-        this.userByUserId = userByUserId;
-    }
+    
 }
