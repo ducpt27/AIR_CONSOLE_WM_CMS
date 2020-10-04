@@ -1,8 +1,8 @@
 package com.airconsole.wm_cms.security;
 
-import com.airconsole.wm_cms.listener.payload.exception.ResourceNotFoundException;
-import com.airconsole.wm_cms.model.entities.UserEntity;
-import com.airconsole.wm_cms.model.repository.UserRepo;
+import com.airconsole.wm_cms.listener.exception.ResourceNotFoundException;
+import com.airconsole.wm_cms.model.entities.User;
+import com.airconsole.wm_cms.model.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,13 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    UserRepo userRepository;
+    UserRepository userRepository;
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String usernameOrEmail)
             throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+        User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found with username or email : " + usernameOrEmail)
         );
@@ -30,7 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Transactional
     public UserDetails loadUserById(Integer id) {
-        UserEntity user = userRepository.findById(id).orElseThrow(
+        User user = userRepository.findById(id).orElseThrow(
             () -> new ResourceNotFoundException("User", "id", id)
         );
 

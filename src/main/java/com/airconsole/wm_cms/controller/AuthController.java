@@ -1,26 +1,25 @@
 package com.airconsole.wm_cms.controller;
 
-import com.airconsole.wm_cms.model.entities.UserEntity;
-import com.airconsole.wm_cms.model.repository.RoleRepo;
-import com.airconsole.wm_cms.model.repository.UserRepo;
-import com.airconsole.wm_cms.listener.payload.reponse.base.BaseResponse;
-import com.airconsole.wm_cms.listener.payload.reponse.base.ErrorCode;
-import com.airconsole.wm_cms.listener.payload.reponse.base.JwtAuthenticationResponse;
-import com.airconsole.wm_cms.listener.payload.request.auth.LoginRequest;
-import com.airconsole.wm_cms.listener.payload.request.auth.SignUpRequest;
+import com.airconsole.wm_cms.model.entities.User;
+import com.airconsole.wm_cms.listener.request.auth.LoginReq;
+import com.airconsole.wm_cms.listener.request.auth.SignUpReq;
+import com.airconsole.wm_cms.listener.response.base.BaseResp;
+import com.airconsole.wm_cms.listener.response.base.ErrorCode;
+import com.airconsole.wm_cms.listener.response.base.JwtAuthenticationResp;
+import com.airconsole.wm_cms.model.repository.UserRepository;
+import com.airconsole.wm_cms.security.CurrentUser;
 import com.airconsole.wm_cms.security.JwtTokenProvider;
+import com.airconsole.wm_cms.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
@@ -30,17 +29,11 @@ import java.net.URI;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    public AuthController() {
-    }
-
     @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepo userRepository;
-
-    @Autowired
-    RoleRepo roleRepository;
+    UserRepository userRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -49,8 +42,7 @@ public class AuthController {
     JwtTokenProvider tokenProvider;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
+    public @ResponseBody ResponseEntity<?> authenticateUser(@Valid @RequestBody final LoginReq loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsernameOrEmail(),
@@ -61,33 +53,33 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+        return ResponseEntity.ok(new JwtAuthenticationResp(jwt));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return new ResponseEntity(new BaseResponse(ErrorCode.SUCCESS, "Username is already taken!"),
-                    HttpStatus.BAD_REQUEST);
+    @PreAuthorize("hasRole('ADD_USER')")
+    public ResponseEntity<?> registerUser(@CurrentUser UserPrincipal currentUser, @Valid @RequestBody final SignUpReq signUpRequest) {
+
+        if(userRepository.existsByUsername(signUpRequest.getUsername())) {
+            return new ResponseEntity(new BaseResp(ErrorCode.USER_EXIST), HttpStatus.OK);
         }
 
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return new ResponseEntity(new BaseResponse(ErrorCode.SUCCESS, "Email Address already in use!"),
-                    HttpStatus.BAD_REQUEST);
+        if(userRepository.existsByEmail(signUpRequest.getEmail())) {
+            return new ResponseEntity(new BaseResp(ErrorCode.EMAIL_EXIST), HttpStatus.OK);
         }
 
-        // Creating user's account
-        UserEntity user = new UserEntity(signUpRequest.getFull_name(), signUpRequest.getUsername(),
-                signUpRequest.getPassword(), signUpRequest.getEmail());
+        User user = new User(signUpRequest.getName(), signUpRequest.getUsername(),
+                signUpRequest.getEmail(), signUpRequest.getPassword());
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setCreateBy(currentUser.getUsername());
 
-        UserEntity result = userRepository.save(user);
+        User result = userRepository.save(user);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/users/{username}")
                 .buildAndExpand(result.getUsername()).toUri();
 
-        return ResponseEntity.created(location).body(new BaseResponse(ErrorCode.SUCCESS, "User registered successfully"));
+        return ResponseEntity.created(location).body(new BaseResp(ErrorCode.SUCCESS));
     }
 }

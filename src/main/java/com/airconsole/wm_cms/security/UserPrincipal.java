@@ -1,7 +1,7 @@
 package com.airconsole.wm_cms.security;
 
-import com.airconsole.wm_cms.model.entities.GroupUserEntity;
-import com.airconsole.wm_cms.model.entities.UserEntity;
+import com.airconsole.wm_cms.model.entities.GroupUser;
+import com.airconsole.wm_cms.model.entities.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.Getter;
@@ -22,7 +22,7 @@ public class UserPrincipal implements UserDetails {
 
     private Integer id;
 
-    private String fullName;
+    private String name;
 
     private String username;
 
@@ -34,34 +34,47 @@ public class UserPrincipal implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrincipal(Integer id, String fullName, String username, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(Integer id, String name, String username, String email, String password, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
-        this.fullName = fullName;
+        this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
+        System.out.println(authorities.toString()); //TODO: remove
     }
 
-    public static UserPrincipal create(UserEntity user) {
+    public static UserPrincipal create(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        if (user.getGroupUserEntityCollection() != null) {
-            for (GroupUserEntity groupUserEntity : user.getGroupUserEntityCollection()) {
-                authorities.addAll(groupUserEntity.getGroupEntity().getGroupPageRoleEntityCollection()
+        if (user.getGroupUsersById() != null) {
+            for (GroupUser groupUser : user.getGroupUsersById()) {
+                authorities.addAll(groupUser.getGroupByGroupId().getGroupPageRolesById()
                         .stream()
-                        .map(e -> new SimpleGrantedAuthority(e.getRoleEntity().getName()))
+                        .map(e -> new SimpleGrantedAuthority(e.getRoleByRoleId().getCode()))
                         .collect(Collectors.toList()));
             };
         }
 
         return new UserPrincipal(
                 user.getId(),
-                user.getFullName(),
+                user.getName(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
                 authorities
         );
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     @Override

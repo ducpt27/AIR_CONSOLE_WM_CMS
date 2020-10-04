@@ -1,44 +1,50 @@
 package com.airconsole.wm_cms.controller;
 
-import com.airconsole.wm_cms.listener.payload.reponse.user.UserIdentityAvailabilityResp;
-import com.airconsole.wm_cms.listener.payload.reponse.user.UserProfileResp;
-import com.airconsole.wm_cms.model.repository.*;
-import com.airconsole.wm_cms.listener.payload.exception.ResourceNotFoundException;
-import com.airconsole.wm_cms.model.entities.UserEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.airconsole.wm_cms.listener.response.UserIdentityAvailabilityResp;
+import com.airconsole.wm_cms.listener.response.UserSummaryResp;
+import com.airconsole.wm_cms.security.CurrentUser;
+import com.airconsole.wm_cms.security.UserPrincipal;
+import com.airconsole.wm_cms.listener.response.base.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import com.airconsole.wm_cms.model.repository.*;
 
 @RestController
 @RequestMapping("/api")
 public class UserController {
 
     @Autowired
-    private UserRepo userRepository;
+    private UserRepository userRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
-    @GetMapping("/users/{username}")
-    public UserProfileResp getUserProfile(@PathVariable(value = "username") String username) {
-        System.out.println("AA");
-        UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
-
-        UserProfileResp userProfile = new UserProfileResp(user.getId(), user.getUsername(), user.getFullName());
-
-        return userProfile;
+    @GetMapping("/user/me")
+    public ResponseEntity<?> getCurrentUser(@CurrentUser final UserPrincipal currentUser) {
+        return ResponseEntity.ok(new UserSummaryResp(currentUser.getId(), currentUser.getUsername(), currentUser.getName()));
     }
 
     @GetMapping("/user/checkUsernameAvailability")
-    public UserIdentityAvailabilityResp checkUsernameAvailability(@RequestParam(value = "username") String username) {
+    public ResponseEntity<?> checkUsernameAvailability(@RequestParam(value = "username") final String username) {
         Boolean isAvailable = !userRepository.existsByUsername(username);
-        return new UserIdentityAvailabilityResp(isAvailable);
+        return ResponseEntity.ok(new UserIdentityAvailabilityResp(ErrorCode.SUCCESS, isAvailable));
     }
 
     @GetMapping("/user/checkEmailAvailability")
-    public UserIdentityAvailabilityResp checkEmailAvailability(@RequestParam(value = "email") String email) {
+    public ResponseEntity<?> checkEmailAvailability(@RequestParam(value = "email") final String email) {
         Boolean isAvailable = !userRepository.existsByEmail(email);
-        return new UserIdentityAvailabilityResp(isAvailable);
+        return ResponseEntity.ok(new UserIdentityAvailabilityResp(ErrorCode.SUCCESS, isAvailable));
     }
+
+    @GetMapping("/users/{username}")
+    @PreAuthorize("hasRole('SHOW_DETAIL_USER')")
+    public UserSummaryResp getUserProfile(@PathVariable(value = "username") final String username) {
+
+//        User user = userRepository.findByUsername(username).orElseThrow(() ->
+//                        new ResourceNotFoundException(new ApiValidationError("User", "username", username))
+//        );
+
+//        return new UserSummaryResp(user.getId(), user.getUsername(), user.getName());
+        return null;
+    }
+
 }
