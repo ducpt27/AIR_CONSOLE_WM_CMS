@@ -1,6 +1,7 @@
 package com.airconsole.wm_cms.security;
 
 import com.airconsole.wm_cms.model.entities.GroupUser;
+import com.airconsole.wm_cms.model.entities.Role;
 import com.airconsole.wm_cms.model.entities.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -9,11 +10,9 @@ import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -41,16 +40,23 @@ public class UserPrincipal implements UserDetails {
         this.email = email;
         this.password = password;
         this.authorities = authorities;
-        System.out.println(authorities.toString()); //TODO: remove
     }
 
     public static UserPrincipal create(User user) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
+        Set<GrantedAuthority> authorities = new HashSet<>();
         if (user.getGroupUsersById() != null) {
             for (GroupUser groupUser : user.getGroupUsersById()) {
                 authorities.addAll(groupUser.getGroupByGroupId().getGroupPageRolesById()
                         .stream()
-                        .map(e -> new SimpleGrantedAuthority(e.getRoleByRoleId().getCode()))
+                        .map(e -> {
+                            if (e.getRoleByRoleId() != null) {
+                                Role role = e.getRoleByRoleId();
+                                if (!StringUtils.isEmpty(role.getCode()) && role.isStatus()) {
+                                    return new SimpleGrantedAuthority("ROLE_" + role.getCode().trim().toUpperCase());
+                                }
+                            }
+                            return null;
+                        })
                         .collect(Collectors.toList()));
             };
         }

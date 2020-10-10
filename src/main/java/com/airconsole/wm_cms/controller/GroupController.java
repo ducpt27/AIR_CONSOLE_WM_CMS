@@ -1,12 +1,10 @@
 package com.airconsole.wm_cms.controller;
 
-import com.airconsole.wm_cms.common.AppConstants;
-import com.airconsole.wm_cms.listener.request.question.QuestionReq;
+import com.airconsole.wm_cms.listener.request.group.GroupReq;
 import com.airconsole.wm_cms.listener.response.base.BaseResp;
 import com.airconsole.wm_cms.listener.response.base.ErrorCode;
-import com.airconsole.wm_cms.listener.response.question.QuestionInfoAddResp;
-import com.airconsole.wm_cms.listener.response.question.QuestionInfoResp;
-import com.airconsole.wm_cms.listener.service.*;
+import com.airconsole.wm_cms.listener.response.group.GroupResp;
+import com.airconsole.wm_cms.listener.service.GroupUserService;
 import com.airconsole.wm_cms.security.CurrentUser;
 import com.airconsole.wm_cms.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,34 +18,31 @@ import java.net.URI;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("/api/questions")
-public class QuestionController {
+@RequestMapping("/api/groups")
+public class GroupController {
 
     @Autowired
-    QuestionService questionService;
+    GroupUserService groupUserService;
 
-    @GetMapping("/")
-    @PreAuthorize("hasRole('SHOW_QUESTION')")
-    public ResponseEntity<?> getList(
-            @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) final int page,
-            @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) final int size
+    @PutMapping("/assign/{groupId}")
+    @PreAuthorize("hasRole('UPDATE_GROUP_USER')")
+    public ResponseEntity<?> updateGroupUsers(
+            @CurrentUser UserPrincipal currentUser,
+            @PathVariable final int groupId,
+            @RequestBody final Collection<Integer> userIds
     ) {
-        return ResponseEntity.ok(questionService.getAllQuestion(page, size));
-    }
+        groupUserService.updateGroupUsers(currentUser.getUsername(), userIds, groupId);
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('SHOW_DETAIL_QUESTION')")
-    public ResponseEntity<?> get(@PathVariable final int id) {
-        return ResponseEntity.ok(questionService.getQuestion(id));
+        return ResponseEntity.ok(new BaseResp(ErrorCode.SUCCESS));
     }
 
     @PostMapping("/")
-    @PreAuthorize("hasRole('ADD_QUESTION')")
-    public ResponseEntity<?> addList(
+    @PreAuthorize("hasRole('ADD_GROUP')")
+    public ResponseEntity<?> add(
             @CurrentUser UserPrincipal currentUser,
-            @Valid @RequestBody final Collection<QuestionReq> questionsReq
+            @Valid @RequestBody final GroupReq groupReq
     ) {
-        QuestionInfoAddResp result = questionService.addQuestion(currentUser.getUsername(), questionsReq);
+        GroupResp result = groupUserService.addGroup(currentUser.getUsername(), groupReq);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/{id}")
@@ -57,13 +52,13 @@ public class QuestionController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('UPDATE_QUESTION')")
+    @PreAuthorize("hasRole('UPDATE_GROUP')")
     public ResponseEntity<?> update(
             @CurrentUser UserPrincipal currentUser,
             @PathVariable final int id,
-            @Valid @RequestBody final QuestionReq questionReq
+            @Valid @RequestBody final GroupReq groupReq
     ) {
-        QuestionInfoResp result = questionService.updateQuestion(currentUser.getUsername(), id, questionReq);
+        GroupResp result = groupUserService.updateGroup(currentUser.getUsername(), id, groupReq);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/{id}")
@@ -73,11 +68,11 @@ public class QuestionController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('DELETE_QUESTION')")
+    @PreAuthorize("hasRole('DELETE_GROUP')")
     public ResponseEntity<?> delete(
             @PathVariable final int id
     ) {
-        questionService.deleteQuestion(id);
+        groupUserService.deleteGroup(id);
         return ResponseEntity.ok(new BaseResp(ErrorCode.SUCCESS));
     }
 }

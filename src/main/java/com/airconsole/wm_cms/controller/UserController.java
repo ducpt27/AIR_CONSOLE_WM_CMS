@@ -1,7 +1,9 @@
 package com.airconsole.wm_cms.controller;
 
+import com.airconsole.wm_cms.listener.exception.ResourceNotFoundException;
 import com.airconsole.wm_cms.listener.response.UserIdentityAvailabilityResp;
 import com.airconsole.wm_cms.listener.response.UserSummaryResp;
+import com.airconsole.wm_cms.model.entities.User;
 import com.airconsole.wm_cms.security.CurrentUser;
 import com.airconsole.wm_cms.security.UserPrincipal;
 import com.airconsole.wm_cms.listener.response.base.ErrorCode;
@@ -38,13 +40,10 @@ public class UserController {
     @GetMapping("/users/{username}")
     @PreAuthorize("hasRole('SHOW_DETAIL_USER')")
     public UserSummaryResp getUserProfile(@PathVariable(value = "username") final String username) {
-
-//        User user = userRepository.findByUsername(username).orElseThrow(() ->
-//                        new ResourceNotFoundException(new ApiValidationError("User", "username", username))
-//        );
-
-//        return new UserSummaryResp(user.getId(), user.getUsername(), user.getName());
-        return null;
+        User user = userRepository.findByUsername(username).orElseThrow(() ->
+                        new ResourceNotFoundException("User", "username", username)
+        );
+        return new UserSummaryResp(user.getId(), user.getUsername(), user.getName());
     }
 
 }

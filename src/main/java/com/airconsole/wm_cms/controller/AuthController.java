@@ -61,11 +61,11 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@CurrentUser UserPrincipal currentUser, @Valid @RequestBody final SignUpReq signUpRequest) {
 
         if(userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return new ResponseEntity(new BaseResp(ErrorCode.USER_EXIST), HttpStatus.OK);
+            return new ResponseEntity<>(new BaseResp(ErrorCode.USER_EXIST), HttpStatus.OK);
         }
 
         if(userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return new ResponseEntity(new BaseResp(ErrorCode.EMAIL_EXIST), HttpStatus.OK);
+            return new ResponseEntity<>(new BaseResp(ErrorCode.EMAIL_EXIST), HttpStatus.OK);
         }
 
         User user = new User(signUpRequest.getName(), signUpRequest.getUsername(),

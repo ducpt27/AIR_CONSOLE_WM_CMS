@@ -1,8 +1,11 @@
 package com.airconsole.wm_cms.listener.response.base;
 
 public class BaseResp {
-    private int code;
+    private Integer code;
     private String message;
+
+    public BaseResp() {
+    }
 
     public BaseResp(ErrorCode errorCode) {
         this.code = errorCode.code;
