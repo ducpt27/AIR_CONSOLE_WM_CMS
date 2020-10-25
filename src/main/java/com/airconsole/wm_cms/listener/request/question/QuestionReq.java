@@ -1,10 +1,12 @@
 package com.airconsole.wm_cms.listener.request.question;
 
+import com.airconsole.wm_cms.listener.request.AbsBaseReq;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Collection;
 
-public class QuestionReq {
+public class QuestionReq extends AbsBaseReq {
     @NotBlank
     @Size(max = 255)
     private String name;
@@ -16,8 +18,7 @@ public class QuestionReq {
 
     private Integer mile_stone;
 
-    @NotBlank
-    private Byte status;
+    private boolean status;
 
     private Collection<AnswerReq> answers;
 
@@ -53,11 +54,11 @@ public class QuestionReq {
         this.mile_stone = mile_stone;
     }
 
-    public Byte getStatus() {
+    public boolean getStatus() {
         return status;
     }
 
-    public void setStatus(Byte status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 

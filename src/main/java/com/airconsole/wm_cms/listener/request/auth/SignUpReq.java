@@ -11,6 +11,7 @@ import javax.validation.constraints.Size;
 @Data
 @ToString
 public class SignUpReq extends AbsBaseReq {
+
     @NotBlank
     @Size(min = 5, max = 128)
     private String name;
@@ -20,13 +21,22 @@ public class SignUpReq extends AbsBaseReq {
     private String username;
 
     @NotBlank
-    @Size(max = 255)
     @Email
     private String email;
 
     @NotBlank
     @Size(min = 6, max = 32)
     private String password;
+
+    private boolean isAdmin;
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
 
     public String getName() {
         return name;

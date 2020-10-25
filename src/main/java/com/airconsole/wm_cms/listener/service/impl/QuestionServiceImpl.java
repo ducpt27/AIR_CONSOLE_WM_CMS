@@ -1,22 +1,20 @@
-package com.airconsole.wm_cms.listener.service;
+package com.airconsole.wm_cms.listener.service.impl;
 
 import com.airconsole.wm_cms.listener.request.question.QuestionReq;
 import com.airconsole.wm_cms.listener.response.base.ErrorCode;
 import com.airconsole.wm_cms.listener.response.base.PagedResp;
-import com.airconsole.wm_cms.listener.response.question.QuestionInfoAddResp;
 import com.airconsole.wm_cms.listener.response.question.QuestionInfoResp;
+import com.airconsole.wm_cms.listener.service.PagingService;
+import com.airconsole.wm_cms.listener.service.QuestionService;
 import com.airconsole.wm_cms.model.entities.Question;
 import com.airconsole.wm_cms.model.mapper.question.QuestionMapper;
 import com.airconsole.wm_cms.model.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,9 +28,9 @@ public class QuestionServiceImpl extends PagingService implements QuestionServic
     @Override
     public PagedResp<QuestionInfoResp> getAllQuestion(int page, int size) {
         validatePageNumberAndSize(page, size);
+        Page<Question> questions = questionRepository
+                .findAll(PageRequest.of(page, size, Sort.Direction.DESC, "createAt"));
 
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createAt");
-        Page<Question> questions = questionRepository.findAll(pageable);
 
         if (questions.getNumberOfElements() == 0) {
             return new PagedResp<>(ErrorCode.SUCCESS, Collections.emptyList(), questions.getNumber(),
@@ -48,32 +46,30 @@ public class QuestionServiceImpl extends PagingService implements QuestionServic
     }
 
     @Override
+    public List<QuestionInfoResp> getAllQuestion() {
+        List<Question> questions = questionRepository
+                .findAll(new Sort(Sort.Direction.DESC, "createAt"));
+
+        return questions.stream()
+                .map(QuestionMapper::getResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public QuestionInfoResp getQuestion(int id) {
         Question question = questionRepository.getOne(id);
         return QuestionMapper.getResponse(question);
     }
 
     @Override
-    public QuestionInfoAddResp addQuestion(String username, Collection<QuestionReq> questionReq) {
-        List<Question> questions = new ArrayList<>();
+    public QuestionInfoResp addQuestion(String username, QuestionReq questionReq) {
 
-        for (QuestionReq req : questionReq) {
-            Question entity = QuestionMapper.getEntity(req);
-            entity.setUpdateBy(username);
-            questions.add(entity);
-        }
+        Question entity = QuestionMapper.getEntity(questionReq);
+        entity.setUpdateBy(username);
 
-        List<Question> result = questionRepository.saveAll(questions);
+        Question result = questionRepository.save(entity);
 
-        QuestionInfoAddResp questionInfoAddResp = new QuestionInfoAddResp();
-
-        if (result.size() == 1) {
-            questionInfoAddResp.setId(result.get(0).getId());
-        }
-
-        questionInfoAddResp.setTotal_record(result.size());
-
-        return questionInfoAddResp;
+        return QuestionMapper.getResponse(result);
     }
 
     @Override

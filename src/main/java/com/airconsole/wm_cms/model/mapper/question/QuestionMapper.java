@@ -10,27 +10,27 @@ import java.util.stream.Collectors;
 
 public class QuestionMapper {
 
-    public static QuestionInfoResp getResponse(Question entities) {
+    public static QuestionInfoResp getResponse(Question entity) {
 
-        if (entities == null) {
+        if (entity == null) {
             return null;
         }
 
         QuestionInfoResp questionInfoResp = new QuestionInfoResp();
 
-        questionInfoResp.setId(entities.getId());
-        questionInfoResp.setName(entities.getName());
-        questionInfoResp.setInfo(entities.getInfo());
-        questionInfoResp.setMile_stone(entities.getMileStone());
-        questionInfoResp.setStatus(entities.getStatus());
+        questionInfoResp.setId(entity.getId());
+        questionInfoResp.setName(entity.getName());
+        questionInfoResp.setInfo(entity.getInfo());
+        questionInfoResp.setMile_stone(entity.getMileStone());
+        questionInfoResp.setStatus(entity.getStatus());
 
-        questionInfoResp.setUpdate_at(entities.getUpdateAt());
-        questionInfoResp.setUpdate_by(entities.getUpdateBy());
-        questionInfoResp.setCreate_at(entities.getCreateAt());
-        questionInfoResp.setCreate_by(entities.getCreateBy());
+        questionInfoResp.setUpdate_at(entity.getUpdateAt());
+        questionInfoResp.setUpdate_by(entity.getUpdateBy());
+        questionInfoResp.setCreate_at(entity.getCreateAt());
+        questionInfoResp.setCreate_by(entity.getCreateBy());
 
-        if (entities.getAnswersById() != null) {
-            questionInfoResp.setAnswers(entities.getAnswersById().stream().map(answer -> {
+        if (entity.getAnswersById() != null) {
+            questionInfoResp.setAnswers(entity.getAnswersById().stream().map(answer -> {
                 AnswerInfoResp answerInfoResp = new AnswerInfoResp();
                 answerInfoResp.setId(answer.getId());
                 answerInfoResp.setName(answer.getName());
@@ -66,11 +66,14 @@ public class QuestionMapper {
         entity.setName(req.getName());
         entity.setInfo(req.getInfo());
         entity.setMileStone(req.getMile_stone());
-        entity.setStatus(req.getStatus());
+        entity.setStatus(req.getStatus() ? Byte.valueOf("1") : Byte.valueOf("0"));
 
         if (req.getAnswers() != null) {
             entity.setAnswersById(req.getAnswers().stream().map(answerReq -> {
                 Answer answer = new Answer();
+                if (answerReq.getId() != null) {
+                    answer.setId(answerReq.getId());
+                }
                 answer.setName(answerReq.getName());
                 answer.setTrue(answerReq.getTrue());
                 return answer;

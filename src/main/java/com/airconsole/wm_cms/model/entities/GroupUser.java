@@ -15,6 +15,15 @@ public class GroupUser {
     private Group groupByGroupId;
     private User userByUserId;
 
+    public GroupUser() {
+    }
+
+    public GroupUser(int groupId, int userId, String createBy) {
+        this.groupId = groupId;
+        this.userId = userId;
+        this.createBy = createBy;
+    }
+
     @Id
     @Column(name = "group_id")
     public int getGroupId() {

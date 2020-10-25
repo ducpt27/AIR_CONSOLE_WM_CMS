@@ -21,7 +21,7 @@ import java.util.Collection;
 @RequestMapping("/api/groups")
 public class GroupController {
 
-    @Autowired
+    @Autowired()
     GroupUserService groupUserService;
 
     @PutMapping("/assign/{groupId}")

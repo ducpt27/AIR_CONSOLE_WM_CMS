@@ -6,7 +6,7 @@ import com.airconsole.wm_cms.listener.response.group.GroupResp;
 import java.util.Collection;
 
 public interface GroupUserService {
-    void updateGroupUsers(String username, Collection<Integer> userId, int groupId);
+    void updateGroupUsers(String username, Collection<Integer> userIds, int groupId);
 
     GroupResp addGroup(String username, GroupReq groupReq);
 

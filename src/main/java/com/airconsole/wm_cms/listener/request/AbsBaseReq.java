@@ -29,4 +29,12 @@ public abstract class AbsBaseReq {
     public void setChannel(String channel) {
         this.channel = channel;
     }
+
+    public AbsBaseReq() {
+    }
+
+    public AbsBaseReq(@NotBlank String transId, @NotBlank String channel) {
+        this.transId = transId;
+        this.channel = channel;
+    }
 }

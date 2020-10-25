@@ -1,11 +1,11 @@
 package com.airconsole.wm_cms.controller;
 
-import com.airconsole.wm_cms.model.entities.User;
 import com.airconsole.wm_cms.listener.request.auth.LoginReq;
 import com.airconsole.wm_cms.listener.request.auth.SignUpReq;
 import com.airconsole.wm_cms.listener.response.base.BaseResp;
 import com.airconsole.wm_cms.listener.response.base.ErrorCode;
 import com.airconsole.wm_cms.listener.response.base.JwtAuthenticationResp;
+import com.airconsole.wm_cms.model.entities.User;
 import com.airconsole.wm_cms.model.repository.UserRepository;
 import com.airconsole.wm_cms.security.CurrentUser;
 import com.airconsole.wm_cms.security.JwtTokenProvider;
@@ -58,13 +58,16 @@ public class AuthController {
 
     @PostMapping("/signup")
     @PreAuthorize("hasRole('ADD_USER')")
-    public ResponseEntity<?> registerUser(@CurrentUser UserPrincipal currentUser, @Valid @RequestBody final SignUpReq signUpRequest) {
+    public ResponseEntity<?> registerUser(
+            @CurrentUser UserPrincipal currentUser,
+            @Valid @RequestBody final SignUpReq signUpRequest
+    ) {
 
-        if(userRepository.existsByUsername(signUpRequest.getUsername())) {
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return new ResponseEntity<>(new BaseResp(ErrorCode.USER_EXIST), HttpStatus.OK);
         }
 
-        if(userRepository.existsByEmail(signUpRequest.getEmail())) {
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return new ResponseEntity<>(new BaseResp(ErrorCode.EMAIL_EXIST), HttpStatus.OK);
         }
 

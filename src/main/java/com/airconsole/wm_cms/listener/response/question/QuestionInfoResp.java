@@ -1,11 +1,9 @@
 package com.airconsole.wm_cms.listener.response.question;
 
-import com.airconsole.wm_cms.listener.response.base.BaseResp;
-
 import java.sql.Timestamp;
 import java.util.Collection;
 
-public class QuestionInfoResp extends BaseResp {
+public class QuestionInfoResp {
 
     private Integer id;
     private String name;
