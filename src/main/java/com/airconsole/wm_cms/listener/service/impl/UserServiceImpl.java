@@ -57,6 +57,11 @@ public class UserServiceImpl implements UserService {
 
         user.setUpdateBy(username);
 
+        System.out.println("=========================================");
+        System.out.println(userReq.getIsAdmin());
+        System.out.println(user.getIsAdmin());
+        System.out.println("=========================================");
+
         User result = userRepository.save(user);
 
         return UserMapper.getResponse(result);

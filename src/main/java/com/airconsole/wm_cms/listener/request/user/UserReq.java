@@ -1,10 +1,10 @@
 package com.airconsole.wm_cms.listener.request.user;
 
 import com.airconsole.wm_cms.listener.request.AbsBaseReq;
-import com.airconsole.wm_cms.listener.request.group.GroupReq;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -18,7 +18,8 @@ public class UserReq extends AbsBaseReq {
     @Email
     private String email;
 
-    private boolean isAdmin;
+    @NotNull
+    private Boolean isAdmin;
 
     private List<Integer> groups;
 
@@ -49,11 +50,11 @@ public class UserReq extends AbsBaseReq {
         this.email = email;
     }
 
-    public boolean isAdmin() {
-        return isAdmin;
+    public Boolean getIsAdmin() {
+        return this.isAdmin;
     }
 
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
+    public void setIsAdmin(Boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 }

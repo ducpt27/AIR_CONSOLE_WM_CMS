@@ -1,11 +1,14 @@
 package com.airconsole.wm_cms.model.entities;
 
+import lombok.ToString;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Objects;
 
 @Entity
+@ToString
 public class User {
     private int id;
     private String name;

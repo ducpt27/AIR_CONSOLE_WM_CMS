@@ -7,7 +7,7 @@ import com.airconsole.wm_cms.model.mapper.group.GroupMapper;
 
 import java.util.stream.Collectors;
 
-public class UserMapper {
+public class UserMapper<main> {
     public static UserInfoResp getResponse(User entity) {
         if (entity == null) {
             return null;
@@ -50,9 +50,10 @@ public class UserMapper {
         }
 
         entity.setName(req.getName());
-        entity.setIsAdmin(req.isAdmin() ? Byte.valueOf("1") : Byte.valueOf("0"));
+        entity.setIsAdmin((byte) (req.getIsAdmin() ? 1 : 0));
         entity.setEmail(req.getEmail());
 
         return entity;
     }
+
 }
