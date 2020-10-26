@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.aircosnole</groupId>
-	<artifactId>polls</artifactId>
+	<artifactId>airconsole.wm_cms_api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>wm_cms</name>
+	<name>wm_cms_api</name>
 	<description></description>
 
 	<parent>
