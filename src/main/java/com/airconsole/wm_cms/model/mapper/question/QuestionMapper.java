@@ -68,18 +68,6 @@ public class QuestionMapper {
         entity.setMileStone(req.getMile_stone());
         entity.setStatus(req.getStatus() ? Byte.valueOf("1") : Byte.valueOf("0"));
 
-        if (req.getAnswers() != null) {
-            entity.setAnswersById(req.getAnswers().stream().map(answerReq -> {
-                Answer answer = new Answer();
-                if (answerReq.getId() != null) {
-                    answer.setId(answerReq.getId());
-                }
-                answer.setName(answerReq.getName());
-                answer.setTrue(answerReq.getTrue());
-                return answer;
-            }).collect(Collectors.toList()));
-        }
-
         return entity;
     }
 }

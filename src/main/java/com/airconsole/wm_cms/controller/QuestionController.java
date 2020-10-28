@@ -76,4 +76,12 @@ public class QuestionController {
         questionService.deleteQuestion(id);
         return ResponseEntity.ok(new BaseResp(ErrorCode.SUCCESS));
     }
+
+    @PostMapping("")
+    @PreAuthorize("hasRole('SYNC_GAME_QUESTION')")
+    public ResponseEntity<?> syncGame(
+            @CurrentUser UserPrincipal currentUser
+    ) {
+        return ResponseEntity.ok(new BaseResp(ErrorCode.SUCCESS));
+    }
 }

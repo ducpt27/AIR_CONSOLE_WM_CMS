@@ -11,8 +11,18 @@ public class Answer {
     private int idQuestion;
     private Question questionByIdQuestion;
 
+    public Answer() {
+    }
+
+    public Answer(String name, int idQuestion, boolean isTrue) {
+        this.name = name;
+        this.idQuestion = idQuestion;
+        this.isTrue = isTrue;
+    }
+
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getId() {
         return id;
     }
@@ -75,5 +85,15 @@ public class Answer {
 
     public void setQuestionByIdQuestion(Question questionByIdQuestion) {
         this.questionByIdQuestion = questionByIdQuestion;
+    }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", isTrue=" + isTrue +
+                ", idQuestion=" + idQuestion +
+                '}';
     }
 }

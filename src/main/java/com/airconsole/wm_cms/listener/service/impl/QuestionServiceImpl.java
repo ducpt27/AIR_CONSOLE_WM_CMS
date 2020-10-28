@@ -1,13 +1,16 @@
 package com.airconsole.wm_cms.listener.service.impl;
 
+import com.airconsole.wm_cms.listener.request.question.AnswerReq;
 import com.airconsole.wm_cms.listener.request.question.QuestionReq;
 import com.airconsole.wm_cms.listener.response.base.ErrorCode;
 import com.airconsole.wm_cms.listener.response.base.PagedResp;
 import com.airconsole.wm_cms.listener.response.question.QuestionInfoResp;
 import com.airconsole.wm_cms.listener.service.PagingService;
 import com.airconsole.wm_cms.listener.service.QuestionService;
+import com.airconsole.wm_cms.model.entities.Answer;
 import com.airconsole.wm_cms.model.entities.Question;
 import com.airconsole.wm_cms.model.mapper.question.QuestionMapper;
+import com.airconsole.wm_cms.model.repository.AnswerRepository;
 import com.airconsole.wm_cms.model.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +28,9 @@ public class QuestionServiceImpl extends PagingService implements QuestionServic
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
 
     @Override
     public PagedResp<QuestionInfoResp> getAllQuestion(int page, int size) {
@@ -65,9 +72,13 @@ public class QuestionServiceImpl extends PagingService implements QuestionServic
     public QuestionInfoResp addQuestion(String username, QuestionReq questionReq) {
 
         Question entity = QuestionMapper.getEntity(questionReq);
-        entity.setUpdateBy(username);
+        entity.setCreateBy(username);
 
-        Question result = questionRepository.save(entity);
+        Question result = questionRepository.saveAndFlush(entity);
+
+        for (AnswerReq e : questionReq.getAnswers()) {
+            answerRepository.save(new Answer(e.getName(), result.getId(), e.getTrue()));
+        }
 
         return QuestionMapper.getResponse(result);
     }
@@ -77,10 +88,16 @@ public class QuestionServiceImpl extends PagingService implements QuestionServic
         Question question = questionRepository.getOne(id);
 
         QuestionMapper.getEntity(questionReq, id, question);
-
         question.setUpdateBy(username);
-
         Question result = questionRepository.save(question);
+
+        answerRepository.deleteAll(result.getAnswersById());
+        List<Answer> answers = new ArrayList<>();
+        for (AnswerReq e : questionReq.getAnswers()) {
+            answers.add(new Answer(e.getName(), id, e.getTrue()));
+        }
+        answerRepository.saveAll(answers);
+
 
         return QuestionMapper.getResponse(result);
     }
