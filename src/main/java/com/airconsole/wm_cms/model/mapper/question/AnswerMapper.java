@@ -3,8 +3,8 @@ package com.airconsole.wm_cms.model.mapper.question;
 import com.airconsole.wm_cms.listener.request.question.QuestionReq;
 import com.airconsole.wm_cms.model.entities.Answer;
 
-import java.util.stream.Collectors;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AnswerMapper {
 

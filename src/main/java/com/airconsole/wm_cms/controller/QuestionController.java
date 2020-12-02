@@ -77,11 +77,19 @@ public class QuestionController {
         return ResponseEntity.ok(new BaseResp(ErrorCode.SUCCESS));
     }
 
-    @PostMapping("")
+    @PostMapping("/sync")
     @PreAuthorize("hasRole('SYNC_GAME_QUESTION')")
     public ResponseEntity<?> syncGame(
             @CurrentUser UserPrincipal currentUser
     ) {
         return ResponseEntity.ok(new BaseResp(ErrorCode.SUCCESS));
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<?> getListGame(
+            @RequestParam(value = "channel") final String channel,
+            @RequestParam(value = "transId") final String transId
+    ) {
+        return ResponseEntity.ok(new BaseResp(ErrorCode.SUCCESS, questionService.getAllQuestion()));
     }
 }

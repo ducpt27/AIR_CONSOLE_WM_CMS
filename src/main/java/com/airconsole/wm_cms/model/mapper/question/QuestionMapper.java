@@ -3,7 +3,6 @@ package com.airconsole.wm_cms.model.mapper.question;
 import com.airconsole.wm_cms.listener.request.question.QuestionReq;
 import com.airconsole.wm_cms.listener.response.question.AnswerInfoResp;
 import com.airconsole.wm_cms.listener.response.question.QuestionInfoResp;
-import com.airconsole.wm_cms.model.entities.Answer;
 import com.airconsole.wm_cms.model.entities.Question;
 
 import java.util.stream.Collectors;
