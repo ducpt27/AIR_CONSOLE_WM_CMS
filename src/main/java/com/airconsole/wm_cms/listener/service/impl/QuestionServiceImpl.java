@@ -70,7 +70,6 @@ public class QuestionServiceImpl extends PagingService implements QuestionServic
 
     @Override
     public QuestionInfoResp addQuestion(String username, QuestionReq questionReq) {
-
         Question entity = QuestionMapper.getEntity(questionReq);
         entity.setCreateBy(username);
 

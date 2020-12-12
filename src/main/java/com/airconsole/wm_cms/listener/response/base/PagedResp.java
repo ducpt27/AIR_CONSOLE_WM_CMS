@@ -5,12 +5,12 @@ import java.util.List;
 
 public class PagedResp<T> extends BaseResp {
 
-    private Collection<T> content;
-    private int page;
-    private int size;
-    private long totalElements;
-    private int totalPages;
-    private boolean last;
+    protected Collection<T> content;
+    protected int page;
+    protected int size;
+    protected long totalElements;
+    protected int totalPages;
+    protected boolean last;
 
     public PagedResp(ErrorCode errorCode, Collection<T> content, int page, int size, long totalElements, int totalPages, boolean last) {
         super(errorCode);

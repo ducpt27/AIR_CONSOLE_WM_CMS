@@ -1,9 +1,9 @@
 package com.airconsole.wm_cms.listener.response.base;
 
 public class BaseResp {
-    private Integer code;
-    private String message;
-    private Object data;
+    protected Integer code;
+    protected String message;
+    protected Object data;
 
     public BaseResp(ErrorCode errorCode, Object data) {
         this(errorCode);
