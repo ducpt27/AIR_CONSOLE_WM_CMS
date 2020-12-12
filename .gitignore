@@ -37,3 +37,6 @@ transaction-logs
 secrets.yml
 .gradletasknamecache
 .sts4-cache
+logs/archived/wm_cms-logger-2020-12-02.0.log.txt
+logs/wm_cms-logger.log
+*.log
